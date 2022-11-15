@@ -10,24 +10,21 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from flask import Flask
+import random
 
-import character
-import game
+from monsters import MONSTERS
 
-def main():
-    name = input("Enter your hero name: ")
-    player = character.Player(name)
-    mygame = game.Game(player)
+app = Flask(__name__)
 
-    print("Here are your player initial stats:")
-    player.display_characteristics()
-    # Do the fucking loop
-    while not mygame.is_over():
-        player.display_position()
-        mygame.get_player_action()
-        # fight or not ?
-        player.display_characteristics()
-        break
+@app.route("/")
+def hello_world():
+    return {"Status": "Ok"}
 
-if __name__ == "__main__":
-    main()
+@app.route("/monster")
+def monster():
+    return random.choice(MONSTERS)
+
+@app.route("/dice")
+def dice():
+    return {"score": random.randint(1,12)}
