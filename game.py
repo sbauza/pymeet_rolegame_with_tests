@@ -11,23 +11,15 @@
 #    under the License.
 
 
-import character
-import game
+class Game(object):
 
-def main():
-    name = input("Enter your hero name: ")
-    player = character.Player(name)
-    mygame = game.Game(player)
+    fight = None
 
-    print("Here are your player initial stats:")
-    player.display_characteristics()
-    # Do the fucking loop
-    while not mygame.is_over():
-        player.display_position()
-        mygame.get_player_action()
-        # fight or not ?
-        player.display_characteristics()
-        break
+    def __init__(self, player):
+        self.player = player
 
-if __name__ == "__main__":
-    main()
+    def is_over(self):
+        return False
+
+    def get_player_action(self):
+        pass
