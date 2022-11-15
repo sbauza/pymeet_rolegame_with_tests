@@ -10,10 +10,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from flask import Flask
 import random
 
-from monsters import MONSTERS
+from flask import Flask
+
+from external_service.monsters import MONSTERS
+
 
 app = Flask(__name__)
 

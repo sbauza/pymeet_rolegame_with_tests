@@ -11,23 +11,40 @@
 #    under the License.
 
 
-import character
-import game
+from rolegame import character
+from rolegame import game
+
 
 def main():
     name = input("Enter your hero name: ")
     player = character.Player(name)
-    mygame = game.Game(player)
+    mygame = game.Game(player, rounds=4)
 
     print("Here are your player initial stats:")
     player.display_characteristics()
     # Do the fucking loop
     while not mygame.is_over():
-        player.display_position()
-        mygame.get_player_action()
-        # fight or not ?
-        player.display_characteristics()
-        break
+        mygame.display_position()
+        if mygame.spotted:
+            choice = input("[F]lee or [A]ttack ? [F,A]: ")
+            fled = False
+            if choice.lower() == 'f':
+                fled = mygame.flee()
+            if choice.lower() != 'f' or not fled:
+                mygame.fight()
+                player.display_characteristics()
+        if player.dead:
+            print("You're dead.")
+            break
+        choice = input("[R]est or [M]ove ? [R, M]: ")
+        if choice.lower() == 'r':
+            mygame.rest()
+        else:
+            mygame.move()
+        print("\n\n")
+    else:
+        mygame.display_position()
+        print("Congratulations. You won !")
 
 if __name__ == "__main__":
     main()

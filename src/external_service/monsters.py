@@ -13,38 +13,38 @@
 MONSTERS = [
     {
         "name": "pytestire",
-        "health": 200,
+        "health": 80,
         "strength": 2,
         "icon": "🧛",
     },
     {
         "name": "toxmentor",
-        "health": 500,
+        "health": 50,
         "strength": 3,
         "icon": "👹",
     },
     {
         "name": "unitroll",
-        "health": 300,
+        "health": 30,
         "strength": 2,
         "icon": "🧌",
     },
     {
         "name": "fixtughost",
-        "health": 150,
+        "health": 70,
         "strength": 1,
         "icon": "👻",
     },
     {
         "name": "great python",
         "health": 100,
-        "strength": 1,
+        "strength": 3,
         "icon": "🐍",
     },
     {
         "name": "mocklin",
-        "health": 180,
-        "strength": 2,
+        "health": 30,
+        "strength": 3,
         "icon": "👺",
     },
 ]

@@ -1,4 +1,4 @@
 #!/bin/bash
 #
 set -euo pipefail
-flask run
+flask --app external_service.app:app run

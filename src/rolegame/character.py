@@ -10,79 +10,77 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+#This is required for type hinting a method with the enclosing class
+from __future__ import annotations
 from random import randint
 
 
 class Health(object):
     gauge = 100
 
-    def __init__(self, power=100):
+    def __init__(self, power: int = 100) -> None:
         self.gauge = min(power, 100)
 
-    def __add__(self, power):
+    def __add__(self, power: int) -> Health:
         new_gauge = self.gauge + power
         return Health(new_gauge) if new_gauge <= 100 else Health(100)
 
-    def __sub__(self, power):
+    def __sub__(self, power: int) -> Health:
         new_gauge = self.gauge - power
         return Health(new_gauge) if new_gauge >= 0 else Health(0)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.gauge)
 
-    def __eq__(self, health):
+    def __eq__(self, health: Health) -> bool:
         return self.gauge == health.gauge
 
     @property
-    def dead(self):
+    def dead(self) -> bool:
         return self.gauge == 0
 
 
 class Character(object):
 
     name = None
-    multiplier = 1
 
-    def __init__(self, name=None, gauge=100):
-        self.health = Health(gauge)
+    def __init__(self, name: str = None, health: int = 100) -> None:
+        self.health = Health(health)
         # Set character strength between 1 and 3
         self.strength = randint(1,3)
-
-    def attack(self, other):
-        damage = randint(0, self.multiplier*10)
-        other.health -= damage
-
-class Player(Character):
-
-    multiplier = 10
-    # Position 0(start) 4(got the treasure)
-    position = 0
-    icon = "🧝"
-
-    def __init__(self, name):
-        super(Player, self).__init__(name, gauge=100)
         self.name = name
 
-    def display_position(self):
-        if self.position == 0:
-            print("{}___💰".format(self.icon))
-        if self.position == 1:
-            print("_{}__💰".format(self.icon))
-        if self.position == 2:
-            print("__{}_💰".format(self.icon))
-        if self.position == 3:
-            print("___{}💰".format(self.icon))
-        if self.position == 4:
-            print("You got the 💰")
-        print()
+    def attack(self, damage: int, other: Character) -> None:
+        print("{} hits {} on {}".format(self.name, damage, other.name))
+        other.health -= damage
 
-    def display_characteristics(self):
-        print("Hero {}: {}".format(self.icon, self.name))
-        print("--------------------------------------------------".format(self.icon))
+    @property
+    def dead(self) -> bool:
+        return self.health.dead
+
+    def display_characteristics(self) -> None:
+        print("{} {}: {}".format(self.type, self.icon, self.name))
+        print("--------------------------------------------".format(self.icon))
         print("Strength: {}".format(self.strength))
         print("Health: {}".format(self.health))
         print()
 
 
+class Player(Character):
+
+    icon = "🧝"
+    type = 'Hero'
+
+    def __init__(self, name: str) -> None:
+        super(Player, self).__init__(name, health=100)
+
+
 class Monster(Character):
-    pass
+
+    type = 'Monster'
+
+    def __init__(self, name: str,
+                 health: int, strength: int, icon: str) -> None:
+        super(Monster, self).__init__(name, health)
+        self.icon = icon
+        self.strength = strength
