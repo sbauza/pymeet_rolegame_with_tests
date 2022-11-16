@@ -17,7 +17,7 @@ from rolegame import game
 
 def main():
     player = character.Player.newPlayer()
-    mygame = game.Game(player, rounds=4)
+    mygame = game.Game(player, rounds=5)
 
     print("Here are your player initial stats:")
     player.display_characteristics()
@@ -25,12 +25,13 @@ def main():
     while not mygame.is_over():
         mygame.display_position()
         if mygame.spotted:
+            monster = mygame.get_monster()
             choice = input("[F]lee or [A]ttack ? [F,A]: ")
             fled = False
             if choice.lower() == 'f':
                 fled = mygame.flee()
             if choice.lower() != 'f' or not fled:
-                mygame.fight()
+                mygame.fight(monster)
                 player.display_characteristics()
         if player.dead:
             print("You're dead.")

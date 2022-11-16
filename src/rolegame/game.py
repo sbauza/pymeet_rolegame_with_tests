@@ -17,7 +17,7 @@ from rolegame import character
 from rolegame import client
 
 # The minimum number of the dice in order to succeed to flee a monster
-FLED_DICE_SUCCESS_MIN = 11
+FLED_DICE_SUCCESS_MIN = 9
 
 
 class Game(object):
@@ -53,17 +53,20 @@ class Game(object):
             print("Argh, you have been spotted by a monster !!!")
         return spotted == True
 
+    def get_monster(self) -> character.Monster:
+        monster_dict = self.client.get_monster()
+        monster = character.Monster(**monster_dict)
+        print("⚔️  You fight the monster " + monster.name )
+        monster.display_characteristics()
+        return monster
+
     def _attack(
             self, attacker: character.Character, attacked: character.Character
         ) -> None:
         dice = self.client.get_dice()
         attacker.attack(attacker.strength * dice, attacked)
 
-    def fight(self) -> None:
-        monster_dict = self.client.get_monster()
-        monster = character.Monster(**monster_dict)
-        print("⚔️  You fight the monster " + monster.name )
-        monster.display_characteristics()
+    def fight(self, monster: character.Monster) -> None:
         while True:
             self._attack(self.player, monster)
             if monster.dead:
