@@ -1,3 +1,3 @@
 
 
-# mocking de classe client
+# mocking de classe client avec setUp()

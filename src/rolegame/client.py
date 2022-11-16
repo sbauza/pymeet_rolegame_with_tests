@@ -20,8 +20,9 @@ ROOT_URL = 'http://localhost:5000'
 class Client(object):
     
     def __init__(self) -> None:
-        result = requests.get(ROOT_URL + '/')
-        if not result:
+        try:
+            requests.get(ROOT_URL + '/')
+        except requests.ConnectionError:
             raise Exception("Can't access " + ROOT_URL)
 
     def get_dice(self) -> int:

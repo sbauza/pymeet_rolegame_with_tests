@@ -50,13 +50,12 @@ class Game(object):
         # odd numbers from the dice make us spotted by the monster !!!
         spotted = dice % 2
         if spotted:
-            print("Argh, you have been spotted by a monster !!!")
+            print("🧌  Argh, you have been spotted by a monster !!!")
         return spotted == True
 
     def get_monster(self) -> character.Monster:
         monster_dict = self.client.get_monster()
         monster = character.Monster(**monster_dict)
-        print("⚔️  You fight the monster " + monster.name )
         monster.display_characteristics()
         return monster
 
@@ -67,6 +66,7 @@ class Game(object):
         attacker.attack(attacker.strength * dice, attacked)
 
     def fight(self, monster: character.Monster) -> None:
+        print("⚔️  You decided to fight to death " + monster.name)
         while True:
             self._attack(self.player, monster)
             if monster.dead:

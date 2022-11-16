@@ -16,6 +16,8 @@ from rolegame import game
 
 
 def main():
+    print("⚔️ ⚔️ ⚔️ ⚔️ ⚔️  WELCOME INTO THE QUEST "
+          "TO THE FAKE OBJECT  ⚔️ ⚔️ ⚔️ ⚔️ ⚔️\n\n")
     player = character.Player.newPlayer()
     mygame = game.Game(player, rounds=5)
 
