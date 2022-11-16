@@ -51,7 +51,7 @@ class Character(object):
         self.name = name
 
     def attack(self, damage: int, other: Character) -> None:
-        print("{} hits {} on {}".format(self.name, damage, other.name))
+        print("🎲 {} hits {} on {}".format(self.name, damage, other.name))
         other.health -= damage
 
     @property

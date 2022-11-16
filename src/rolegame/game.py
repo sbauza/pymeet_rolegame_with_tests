@@ -62,7 +62,7 @@ class Game(object):
     def fight(self) -> None:
         monster_dict = self.client.get_monster()
         monster = character.Monster(**monster_dict)
-        print("You fight the monster " + monster.name )
+        print("⚔️  You fight the monster " + monster.name )
         monster.display_characteristics()
         while True:
             self._attack(self.player, monster)
@@ -74,7 +74,7 @@ class Game(object):
                 break
 
     def flee(self) -> None:
-        print("You try to run away")
+        print("🏃 You try to run away")
         dice = self.client.get_dice()
         # only numbers above 9 allow us to flee
         fled = dice > FLED_DICE_SUCCESS_MIN
@@ -86,9 +86,9 @@ class Game(object):
             print("You're exhausted by the unsuccessful run, "
                   "your health reduces by {}.".format(dice))
         return fled
-        
+
     def rest(self) -> None:
-        print("You decide to take some rest but it takes 3 more rounds.")
+        print("💤 You decide to take some rest but it takes 3 more rounds.")
         self.player.health += 10
         self.player.display_characteristics()
         self.rounds += 3
