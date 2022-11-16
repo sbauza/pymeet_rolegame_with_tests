@@ -16,8 +16,7 @@ from rolegame import game
 
 
 def main():
-    name = input("Enter your hero name: ")
-    player = character.Player(name)
+    player = character.Player.newPlayer()
     mygame = game.Game(player, rounds=4)
 
     print("Here are your player initial stats:")

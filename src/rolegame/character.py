@@ -29,7 +29,7 @@ class Health(object):
         new_gauge = self.gauge - power
         return Health(new_gauge) if new_gauge >= 0 else Health(0)
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return str(self.gauge)
 
     def __eq__(self, health: Health) -> bool:
@@ -73,6 +73,11 @@ class Player(Character):
 
     def __init__(self, name: str) -> None:
         super(Player, self).__init__(name, health=100)
+
+    @classmethod
+    def newPlayer(cls) -> Player:
+        name = input("Enter your hero name: ")
+        return cls(name)
 
 
 class Monster(Character):

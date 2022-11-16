@@ -1,0 +1,3 @@
+
+
+# mocking de classe client
