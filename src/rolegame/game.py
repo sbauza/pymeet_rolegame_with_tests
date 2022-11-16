@@ -76,7 +76,7 @@ class Game(object):
     def flee(self) -> None:
         print("🏃 You try to run away")
         dice = self.client.get_dice()
-        # only numbers above 9 allow us to flee
+        # only numbers above FLED_DICE_SUCCESS_MIN allow us to flee
         fled = dice > FLED_DICE_SUCCESS_MIN
         if fled:
             print("Huzzah, you were able to flee the monster !")
@@ -88,7 +88,18 @@ class Game(object):
         return fled
 
     def rest(self) -> None:
-        print("💤 You decide to take some rest but it takes 3 more rounds.")
-        self.player.health += 10
+        print("💤 You decide to take some rest: ")
+        dice = self.client.get_dice()
+        # if you're fortunate, you can get 100 more XPs but in average, you will
+        # only get around 25 XPs, mwahahaha
+        added_health = round(100 / dice)
+        print("You're fortunate to gain {} XPs".format(added_health))
+        self.player.health += added_health
         self.player.display_characteristics()
-        self.rounds += 3
+        # dice numbers above 6 don't give you extra rounds, but if less than 6,
+        # you'll get more XP with a tradeoff of up to 6 extra rounds.
+        added_rounds = int(added_health / 15)
+        if added_rounds:
+            s = 's' if added_rounds > 1 else ''
+            print("... but it takes {} more round{}.".format(added_rounds, s))
+            self.rounds += added_rounds
