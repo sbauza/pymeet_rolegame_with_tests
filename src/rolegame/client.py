@@ -20,6 +20,7 @@ ROOT_URL = 'http://localhost:5000'
 class Client(object):
     
     def __init__(self) -> None:
+        # This is a stupid connection check at startup
         try:
             requests.get(ROOT_URL + '/')
         except requests.ConnectionError:
@@ -35,7 +36,7 @@ class Client(object):
             score = content.get('score')
             return score
         else:
-            raise Exception("Can't access " + ROOT_URL)
+            raise Exception("Can't read " + ROOT_URL)
     
     def get_monster(self) -> typing.Dict:
         result = requests.get(ROOT_URL + '/monster')
@@ -47,4 +48,4 @@ class Client(object):
                     "Can't read content of " + ROOT_URL + '/monster') 
             return content
         else:
-            raise Exception("Can't access " + ROOT_URL)
+            raise Exception("Can't read " + ROOT_URL)
