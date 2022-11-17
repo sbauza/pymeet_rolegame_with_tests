@@ -26,14 +26,14 @@ class TestHealth(unittest.TestCase):
     def test_health_init(self):
         health = character.Health()
         self.assertEqual(100, health.gauge)
-        
+
         # we cap the health at 100
         health = character.Health(200)
         self.assertEqual(100, health.gauge)
-        
+
         health = character.Health(50)
         self.assertEqual(50, health.gauge)
-        
+
     def test_health_maths(self):
         health = character.Health(30)
         # just a doublecheck
@@ -55,7 +55,7 @@ class TestHealth(unittest.TestCase):
 
 
 class TestPlayer(unittest.TestCase):
-    
+
     @unittest.skipIf(int(os.getenv('I_KNOW_WHAT_I_DO', 0)) < 1,
                      'test skipped automatically')
     def test_newPlayer_dummy(self):
@@ -63,7 +63,7 @@ class TestPlayer(unittest.TestCase):
         self.assertIsInstance(player, character.Player)
         # you should somehow expect something, right?
         self.assertEqual("foo", player.name)
-    
+
     def test_newPlayer_next_try(self):
         mocked_input = mock.Mock()
         mocked_input.return_value = 'foo'
@@ -72,7 +72,14 @@ class TestPlayer(unittest.TestCase):
         player = character.Player.newPlayer()
         self.assertIsInstance(player, character.Player)
         self.assertEqual("foo", player.name)
-        
+
+    @mock.patch('builtins.input')
+    def test_newPlayer_decorator(self, mocked_input):
+        mocked_input.return_value = 'foo'
+        player = character.Player.newPlayer()
+        self.assertEqual('foo', player.name)
+        mocked_input.assert_called_once()
+
     def test_newPlayer_the_good_way(self):
         with mock.patch('builtins.input') as mocked_input:
             mocked_input.return_value = 'foo'
