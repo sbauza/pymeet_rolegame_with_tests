@@ -93,7 +93,7 @@ class Game(object):
             if self.player.dead:
                 break
 
-    def flee(self) -> None:
+    def flee(self) -> bool:
         print("🏃 You try to run away")
         dice = self.client.get_dice()
         # only numbers above FLED_DICE_SUCCESS_MIN allow us to flee
