@@ -79,3 +79,19 @@ class TestPlayer(unittest.TestCase):
             player = character.Player.newPlayer()
         self.assertEqual('foo', player.name)
         mocked_input.assert_called_once()
+
+
+class TestHealthAgain(unittest.TestCase):
+    def test_eq_with_magicmock(self):
+        health = character.Health(50)
+        mocked_health = mock.Mock(gauge=50)
+        self.assertTrue(mocked_health == health)
+        try:
+            mocked_health.__eq__.assert_called_once_with(health)
+        except AttributeError:
+            # doh, you can't because you need to redefine __eq__ too
+            print(mocked_health.__eq__)
+        mocked_health = mock.MagicMock(gauge=50)
+        self.assertTrue(mocked_health == health)
+        mocked_health.__eq__.assert_called_once_with(health)
+        print(mocked_health.__eq__)
