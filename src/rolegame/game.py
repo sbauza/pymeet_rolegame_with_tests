@@ -10,24 +10,41 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
+#This is required for type hinting a method with the enclosing class
+from __future__ import annotations
 import random
 
 from rolegame import character
 from rolegame import client
 
-# The minimum number of the dice in order to succeed to flee a monster
-FLED_DICE_SUCCESS_MIN = 9
-
 
 class Game(object):
 
-    # Position min=0(start) max=rounds(got the treasure)
-    position = 0
+    # The minimum number of the dice in order to succeed to flee a monster
+    fled_dice_success_min = 9
 
-    def __init__(self, player: character.Player, rounds: int = 4) -> None:
+    # The number of turns
+    rounds = 5
+
+    @staticmethod
+    def get_difficulties():
+        return ['easy', 'medium', 'hard']
+
+    @classmethod
+    def difficulty(cls, difficulty: str = 'medium') -> None:
+        if difficulty == 'easy':
+            cls.rounds = 2
+            cls.fled_dice_success_min = 1
+        elif difficulty == 'medium':
+            cls.rounds = 5
+            cls.fled_dice_success_min = 9
+        elif difficulty == 'hard':
+            cls.rounds = 10
+            cls.fled_dice_success_min = 11
+
+    def __init__(self, player: character.Player) -> None:
         self.player = player
-        self.rounds = rounds
+        self.position = 0
         self.client = client.Client()
 
     def display_position(self) -> None:
@@ -80,7 +97,7 @@ class Game(object):
         print("🏃 You try to run away")
         dice = self.client.get_dice()
         # only numbers above FLED_DICE_SUCCESS_MIN allow us to flee
-        fled = dice > FLED_DICE_SUCCESS_MIN
+        fled = dice > self.fled_dice_success_min
         if fled:
             print("Huzzah, you were able to flee the monster !")
         else:

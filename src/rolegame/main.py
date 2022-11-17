@@ -11,18 +11,23 @@
 #    under the License.
 
 
+
+import argparse
+
 from rolegame import character
 from rolegame import game
 
 
-def main():
-    print("⚔️ ⚔️ ⚔️ ⚔️ ⚔️  WELCOME INTO THE QUEST "
-          "TO THE FAKE OBJECT  ⚔️ ⚔️ ⚔️ ⚔️ ⚔️\n\n")
+def run_game(difficulty: str = 'medium'):
+    print("⚔️ ⚔️ ⚔️ ⚔️ ⚔️  Welcome into the *Q*uest "
+          "*T*o *T*he *F*ake *O*bject  ⚔️ ⚔️ ⚔️ ⚔️ ⚔️\n\n")
     player = character.Player.newPlayer()
-    mygame = game.Game(player, rounds=5)
-
     print("Here are your player initial stats:")
     player.display_characteristics()
+
+    mygame = game.Game(player)
+    game.Game.difficulty(difficulty)
+
     # Do the fucking loop
     while not mygame.is_over():
         mygame.display_position()
@@ -47,6 +52,16 @@ def main():
     else:
         mygame.display_position()
         print("Congratulations. You won !")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--difficulty",
+                        choices=['easy', 'medium', 'hard'],
+                        help='Set the difficulty of the game')
+    args = parser.parse_args()
+    difficulty = args.difficulty if args.difficulty else 'medium'
+    run_game(difficulty)
+
 
 if __name__ == "__main__":
     main()

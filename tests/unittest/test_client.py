@@ -84,3 +84,8 @@ class TestClientDiceOnly(unittest.TestCase):
         the_client = client.Client()
         expected = {"name": "pity", "health": 100, "strength": 1, "icon": "🐍",}
         self.assertEqual(expected, the_client.get_monster())
+        # crazypants and useless assertion but just for the demo need...
+        self.assertEqual(mock.call('http://localhost:5000/monster'),
+                         mock_get.mock_calls[1])
+        # ... because actually we can just verify one call
+        mock_get.assert_any_call('http://localhost:5000/monster')

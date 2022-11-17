@@ -65,7 +65,7 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual("foo", player.name)
     
     def test_newPlayer_next_try(self):
-        mocked_input = mock.MagicMock()
+        mocked_input = mock.Mock()
         mocked_input.return_value = 'foo'
         # This is a special case for mocking input()
         mock.builtins.input = mocked_input
