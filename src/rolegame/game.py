@@ -26,10 +26,6 @@ class Game(object):
     # The number of turns
     rounds = 5
 
-    @staticmethod
-    def get_difficulties():
-        return ['easy', 'medium', 'hard']
-
     @classmethod
     def difficulty(cls, difficulty: str = 'medium') -> None:
         if difficulty == 'easy':

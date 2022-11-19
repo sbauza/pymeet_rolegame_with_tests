@@ -14,10 +14,12 @@
 # THIS TEST MODULE IS NOT INTENDED TO HAVE A FULL COVERAGE. THIS IS JUST FOR
 # THE MEETUP.
 
+import copy
 import unittest
 from unittest import mock
 
 from rolegame import game
+from rolegame import main
 
 
 class TestGameSpotted(unittest.TestCase):
@@ -36,7 +38,7 @@ class TestGameSpotted(unittest.TestCase):
             mock_client_notspecced.Client.get_card.return_value = 'pikachu'
             # in the old implementation, you were verifying that pikachu wasn't
             # spotting you.
-            self.assertFalse(game.Game('1995_player').spotted)
+            self.assertFalse(game.Game('1997_player').spotted)
         # Now, the problem is that the test is still happy while it should raise
         # some exception as we no longer use 'get_card' in 'spotted' method.
 
@@ -44,7 +46,7 @@ class TestGameSpotted(unittest.TestCase):
         with mock.patch.object(game, 'client', autospec=True) as mock_client:
             try:
                 mock_client.Client.get_card.return_value = 'pikachu'
-                self.assertFalse(game.Game('1995_player').spotted)
+                self.assertFalse(game.Game('1997_player').spotted)
             except AttributeError:
                 # Now the test is failing, which is normal as we removed the
                 # call
@@ -61,5 +63,22 @@ class TestGame(unittest.TestCase):
         self.mock_client = self.patcher_client.start()
         self.addCleanup(self.patcher_client.stop)
 
-    def test_e(self):
-        pass
+    def test_difficulty_easy(self):
+        # verify the default values for the two class attributes
+        self.assertEqual(5, game.Game.rounds)
+        self.assertEqual(9, game.Game.fled_dice_success_min)
+        # here there is a trap with classmethods changing attributes
+        # let's use a PropertyMock for one of two attributes
+        with mock.patch('rolegame.game.Game.rounds',
+                        new_callable=mock.PropertyMock):
+            game.Game.difficulty('easy')
+            self.assertEqual(2, game.Game.rounds)
+            self.assertEqual(1, game.Game.fled_dice_success_min)
+        # fortunately, the attribute value is back the previous default
+        self.assertEqual(5, game.Game.rounds)
+        try:
+            # but not the other attribute
+            self.assertEqual(9, game.Game.fled_dice_success_min)
+        except AssertionError:
+            # so, let's revert it to the default since we messed up
+            game.Game.fled_dice_success_min = 9
