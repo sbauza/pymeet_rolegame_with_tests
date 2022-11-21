@@ -13,9 +13,10 @@
 # THIS TEST MODULE IS NOT INTENDED TO HAVE A FULL COVERAGE. THIS IS JUST FOR
 # THE MEETUP.
 
-import requests
 import pytest
+import sys
 
+import requests
 from rolegame import client
 
 
@@ -78,8 +79,10 @@ def mock_monster_rest_api():
     def mock(name):
         mock = pytest.MonkeyPatch()
         mock.setattr(requests, "get", lambda _: fake_monster(name))
+        return mock
 
-    return mock
+    yield mock
+    print("Clean fixture")
 
 
 class TestClientMonster():
@@ -89,14 +92,15 @@ class TestClientMonster():
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
 
         # Use the fixture to mock different monsters
-        mock_monster_rest_api("pity")
+        m1 = mock_monster_rest_api("pity")
         cl = client.Client()
         monster = cl.get_monster()
         assert monster == (
             {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
         )
+        m1.undo()
 
-        mock_monster_rest_api("spider")
+        m2 = mock_monster_rest_api("spider")
         monster = cl.get_monster()
         assert monster == (
             {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
@@ -107,3 +111,4 @@ class TestClientMonster():
             assert monster == (
                 {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
             )
+        m2.undo()
