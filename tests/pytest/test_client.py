@@ -60,9 +60,8 @@ class TestClientDiceOnly():
         dice = cl.get_dice()
         assert dice == 12
 
-
 @pytest.fixture
-def mock_monster_rest_api():
+def mock_monster_rest_api_bad():
     def fake_monster(name):
         resp = requests.Response()
         resp.status_code = 200
@@ -85,22 +84,23 @@ def mock_monster_rest_api():
     print("Clean fixture")
 
 
-class TestClientMonster():
+class TestClientMonsterBad():
     # We use the above fixture here ---------------------v
-    def test_get_monster(self, monkeypatch, mock_monster_rest_api):
+    def test_get_monster(self, monkeypatch, mock_monster_rest_api_bad):
         # Mock the __init__ method of client to avoid the connection check
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
 
         # Use the fixture to mock different monsters
-        m1 = mock_monster_rest_api("pity")
+        m1 = mock_monster_rest_api_bad("pity")
         cl = client.Client()
         monster = cl.get_monster()
         assert monster == (
             {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
         )
+        # Undo needed to not leak mock
         m1.undo()
 
-        m2 = mock_monster_rest_api("spider")
+        m2 = mock_monster_rest_api_bad("spider")
         monster = cl.get_monster()
         assert monster == (
             {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
@@ -112,3 +112,51 @@ class TestClientMonster():
                 {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
             )
         m2.undo()
+
+
+# Do that
+
+@pytest.fixture()
+def mock_monster_rest_api(request, monkeypatch):
+    def fake_monster(name):
+        resp = requests.Response()
+        resp.status_code = 200
+        content = "".join(
+            [
+                '{"name": "',
+                  name,
+                  '", "health": 100, "strength": 1, "icon": "🐍"}'
+            ]
+        )
+        resp._content = content.encode()
+        return resp
+
+    marker = request.node.get_closest_marker("monster_name")
+    monkeypatch.setattr(requests, "get", lambda _: fake_monster(marker.args[0]))
+    yield
+    print("Clean fixture")
+
+@pytest.mark.monster_name("pity")
+class TestClientMonster():
+    # We use the above fixture here ---------------------v
+    def test_get_monster(self, monkeypatch, mock_monster_rest_api):
+        # Mock the __init__ method of client to avoid the connection check
+        monkeypatch.setattr(client.Client, "__init__", lambda _: None)
+
+        # Use the fixture to mock different monsters
+        cl = client.Client()
+        monster = cl.get_monster()
+        assert monster == (
+            {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
+        )
+        #
+        # monster = cl.get_monster()
+        # assert monster == (
+        #     {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
+        # )
+        #
+        # # Next one is a little 🤯
+        # with pytest.raises(AssertionError):
+        #     assert monster == (
+        #         {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
+        #     )
