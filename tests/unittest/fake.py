@@ -13,6 +13,7 @@
 from rolegame import character
 
 
+# This is a fake class acting like a Monster class but not inherited from it.
 class FakeIndependentMonster(character.Character):
     type = 'Monster'
     name = 'FakeIgor'
@@ -27,7 +28,9 @@ class FakeIndependentMonster(character.Character):
         self.strength = 3
 
 
+# This is just a dict for faking an API response from the GET /monsters verb.
 fake_monster_dict = {
+    # Just an optimization to not duplicate testcode, we reuse the object above.
     'name': FakeIndependentMonster.name,
     'icon': FakeIndependentMonster.icon,
     'health': int(FakeIndependentMonster.health),

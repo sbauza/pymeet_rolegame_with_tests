@@ -60,6 +60,7 @@ class TestClientDiceOnly(unittest.TestCase):
     def test_get_dice_fails(self, mock_get):
         the_client = client.Client()
         mock_get.return_value = mock.Mock(text='boom')
+        # hard to decode this JSON text, right?
         self.assertRaises(Exception, the_client.get_dice)
 
     def _fake_get(self, url):
@@ -80,6 +81,7 @@ class TestClientDiceOnly(unittest.TestCase):
         return mock.Mock(text=json.dumps(response))
 
     def test_get_monster(self, mock_get):
+        # with side_effect, you can also stub another method
         mock_get.side_effect = self._fake_get
         the_client = client.Client()
         expected = {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}

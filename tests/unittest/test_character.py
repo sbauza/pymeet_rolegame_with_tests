@@ -72,6 +72,7 @@ class TestPlayer(unittest.TestCase):
         self.assertIsInstance(player, character.Player)
         self.assertEqual("foo", player.name)
 
+    # yeah, that's how you mock an input stream by patching the buildins module
     @mock.patch('builtins.input')
     def test_newPlayer_decorator(self, mocked_input):
         mocked_input.return_value = 'foo'
@@ -79,6 +80,7 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual('foo', player.name)
         mocked_input.assert_called_once()
 
+    # this is always better to only mock in the right call
     def test_newPlayer_the_good_way(self):
         with mock.patch('builtins.input') as mocked_input:
             mocked_input.return_value = 'foo'
@@ -90,6 +92,7 @@ class TestPlayer(unittest.TestCase):
 class TestHealthAgain(unittest.TestCase):
     def test_eq_with_magicmock(self):
         health = character.Health(50)
+        # Just use a standard Mock object
         mocked_health = mock.Mock(gauge=50)
         self.assertTrue(mocked_health == health)
         try:
@@ -97,6 +100,8 @@ class TestHealthAgain(unittest.TestCase):
         except AttributeError:
             # doh, you can't because you need to redefine __eq__ too
             print(mocked_health.__eq__)
+        # Now, instead of using Mock, use the MagicMock object which supports
+        # magic methods mocking.
         mocked_health = mock.MagicMock(gauge=50)
         self.assertTrue(mocked_health == health)
         mocked_health.__eq__.assert_called_once_with(health)

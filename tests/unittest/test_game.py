@@ -14,6 +14,7 @@
 # THIS TEST MODULE IS NOT INTENDED TO HAVE A FULL COVERAGE. THIS IS JUST FOR
 # THE MEETUP.
 
+import io
 import unittest
 from unittest import mock
 
@@ -21,14 +22,37 @@ from rolegame import game
 from tests.unittest import fake
 
 
-class TestGameSpotted(unittest.TestCase):
+# We use new_callable to return a StringIO instead of a MagicMock
+@mock.patch('sys.stdout', new_callable=io.StringIO)
+class TestGameDisplayPosition(unittest.TestCase):
 
     def setUp(self):
-        self.patcher_client = mock.patch('rolegame.client')
-        self.mock_client = self.patcher_client.start()
+        # This is just a sentinel object
+        player = mock.sentinel.Player
+        # and yet another sentinel which is nested
+        player.icon = mock.sentinel.icon
+        with mock.patch.object(game.client, 'Client'):
+            self.fake_game = game.Game(player)
 
-    def tearDown(self):
-        self.patcher_client.stop()
+    @mock.patch.object(game.Game, 'is_over')
+    def test_display_position_won(self, mock_is_over, mock_stdout):
+        mock_is_over.return_value = True
+        self.fake_game.display_position()
+        # as print returns a newline, let's just check with assertIn
+        # thanks to StringIO, we can lookup the stream with getvalue()
+        self.assertIn("You got the 💰", mock_stdout.getvalue())
+
+    @mock.patch.object(game.Game, 'is_over')
+    def test_display_position_notwonyet(self, mock_is_over, mock_stdout):
+        mock_is_over.return_value = False
+        # set the values of the game to make the test independent
+        self.fake_game.rounds = 3
+        self.fake_game.position = 0
+        self.fake_game.display_position()
+        self.assertIn(f'{mock.sentinel.icon}__💰', mock_stdout.getvalue())
+
+
+class TestGameSpotted(unittest.TestCase):
 
     def test_old_spotted_implementation(self):
         # let's pretend the client was having an old API named 'get_card'
@@ -55,12 +79,7 @@ class TestGameSpotted(unittest.TestCase):
         print(mock_client.Client)
 
 
-class TestGame(unittest.TestCase):
-
-    def setUp(self):
-        self.patcher_client = mock.patch('rolegame.client', autospec=True)
-        self.mock_client = self.patcher_client.start()
-        self.addCleanup(self.patcher_client.stop)
+class TestGamePropertyMock(unittest.TestCase):
 
     def test_difficulty_easy(self):
         # verify the default values for the two class attributes
@@ -83,7 +102,7 @@ class TestGame(unittest.TestCase):
             game.Game.fled_dice_success_min = 9
 
 
-class TestGame2(unittest.TestCase):
+class TestGame(unittest.TestCase):
 
     def setUp(self):
         # Don't patch where it's defined, rather patch where it's called !
@@ -92,16 +111,17 @@ class TestGame2(unittest.TestCase):
         # Always prefer addCleanup for stopping the patch
         self.addCleanup(self.patcher_client.stop)
 
+        self.fake_game = game.Game(mock.sentinel.player)
+
     # def tearDown(self):
     #     # Don't do it, this is errorprone if the test returns an exception.
     #     self.patcher_client.stop()
 
     def test_get_monster_one_possibility(self):
-        fake_game = game.Game('test')
         with mock.patch.object(game.character, 'Monster',
                                # here we duck-type with a fake object
                                new=fake.FakeIndependentMonster):
-            monster = fake_game.get_monster()
+            monster = self.fake_game.get_monster()
         self.assertEqual(fake.FakeIndependentMonster.type, monster.type)
         self.assertEqual(fake.FakeIndependentMonster.name, monster.name)
         self.assertEqual(fake.FakeIndependentMonster.strength, monster.strength)
@@ -109,14 +129,37 @@ class TestGame2(unittest.TestCase):
                          str(monster.health))
 
     def test_get_monster_another_possibility(self):
-        fake_game = game.Game('test')
         # we need to mock the Client() instance hence the first return_value
         self.mock_client.Client.return_value.get_monster.return_value = (
             fake.fake_monster_dict
         )
-        monster = fake_game.get_monster()
-        self.assertEqual(fake.FakeIndependentMonster.type, monster.type)
-        self.assertEqual(fake.FakeIndependentMonster.name, monster.name)
-        self.assertEqual(fake.FakeIndependentMonster.strength, monster.strength)
-        self.assertEqual(str(fake.FakeIndependentMonster.health),
+        monster = self.fake_game.get_monster()
+        self.assertEqual(game.character.Monster.type, monster.type)
+        self.assertEqual(fake.fake_monster_dict['name'], monster.name)
+        self.assertEqual(fake.fake_monster_dict['strength'], monster.strength)
+        self.assertEqual(str(fake.fake_monster_dict['health']),
                          str(monster.health))
+
+    def test_get_monster_with_a_fixture(self):
+        # TODO(sbauza)
+        pass
+
+    def test_fight_player_wins(self):
+        # Just a placeholder for contributors who want to try writing ;-)
+        pass
+
+    def test_fight_monster_wins(self):
+        # Just a placeholder for contributors who want to try writing ;-)
+        pass
+
+    def test_flee_successful(self):
+        # Just a placeholder for contributors who want to try writing ;-)
+        pass
+
+    def test_flee_fails(self):
+        # Just a placeholder for contributors who want to try writing ;-)
+        pass
+
+    def test_rest_with_multiple_conditions(self):
+        # Just a placeholder for contributors who want to try writing ;-)
+        pass
