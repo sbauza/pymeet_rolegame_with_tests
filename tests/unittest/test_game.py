@@ -14,12 +14,11 @@
 # THIS TEST MODULE IS NOT INTENDED TO HAVE A FULL COVERAGE. THIS IS JUST FOR
 # THE MEETUP.
 
-import copy
 import unittest
 from unittest import mock
 
 from rolegame import game
-from rolegame import main
+from tests.unittest import fake
 
 
 class TestGameSpotted(unittest.TestCase):
@@ -82,3 +81,37 @@ class TestGame(unittest.TestCase):
         except AssertionError:
             # so, let's revert it to the default since we messed up
             game.Game.fled_dice_success_min = 9
+
+
+class TestGame2(unittest.TestCase):
+
+    def setUp(self):
+        # Don't patch where it's defined, rather patch where it's called !
+        self.patcher_client = mock.patch.object(game, 'client', autospec=True)
+        self.mock_client = self.patcher_client.start()
+        # Always prefer addCleanup for stopping the patch
+        self.addCleanup(self.patcher_client.stop)
+
+    # def tearDown(self):
+    #     # Don't do it, this is errorprone if the test returns an exception.
+    #     self.patcher_client.stop()
+
+    def test_get_monster_one_possibility(self):
+        fake_game = game.Game('test')
+        with mock.patch.object(game.character, 'Monster',
+                               # here we duck-type with a fake object
+                               new=fake.FakeIndependentMonster):
+            monster = fake_game.get_monster()
+        self.assertEqual(fake.FakeIndependentMonster.type, monster.type)
+        self.assertEqual(fake.FakeIndependentMonster.name, monster.name)
+        self.assertEqual(fake.FakeIndependentMonster.strength, monster.strength)
+        self.assertEqual(str(fake.FakeIndependentMonster.health), str(monster.health))
+
+    def test_get_monster_another_better_possibility(self):
+        fake_game = game.Game('test')
+        self.mock_client.Client.return_value.get_monster.return_value = fake.fake_monster_dict
+        monster = fake_game.get_monster()
+        self.assertEqual(fake.FakeIndependentMonster.type, monster.type)
+        self.assertEqual(fake.FakeIndependentMonster.name, monster.name)
+        self.assertEqual(fake.FakeIndependentMonster.strength, monster.strength)
+        self.assertEqual(str(fake.FakeIndependentMonster.health), str(monster.health))

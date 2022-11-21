@@ -12,7 +12,6 @@
 
 #This is required for type hinting a method with the enclosing class
 from __future__ import annotations
-import random
 
 from rolegame import character
 from rolegame import client
