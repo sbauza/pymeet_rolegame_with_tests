@@ -10,7 +10,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
 # THIS TEST MODULE IS NOT INTENDED TO HAVE A FULL COVERAGE. THIS IS JUST FOR
 # THE MEETUP.
 
@@ -73,7 +72,8 @@ class TestClientDiceOnly(unittest.TestCase):
                "name": "pity",
                "health": 100,
                "strength": 1,
-               "icon": "🐍",}
+               "icon": "🐍",
+               }
         else:
             # this can be a connection check or whatever else
             response = {}
@@ -82,7 +82,7 @@ class TestClientDiceOnly(unittest.TestCase):
     def test_get_monster(self, mock_get):
         mock_get.side_effect = self._fake_get
         the_client = client.Client()
-        expected = {"name": "pity", "health": 100, "strength": 1, "icon": "🐍",}
+        expected = {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
         self.assertEqual(expected, the_client.get_monster())
         # crazypants and useless assertion but just for the demo need...
         self.assertEqual(mock.call('http://localhost:5000/monster'),

@@ -17,8 +17,9 @@ import requests
 
 ROOT_URL = 'http://localhost:5000'
 
+
 class Client(object):
-    
+
     def __init__(self) -> None:
         # This is a stupid connection check at startup
         try:
@@ -32,12 +33,12 @@ class Client(object):
             try:
                 content = json.loads(result.text)
             except json.JSONDecodeError:
-                raise Exception("Can't read content of " + ROOT_URL + '/dice') 
+                raise Exception("Can't read content of " + ROOT_URL + '/dice')
             score = content.get('score')
             return score
         else:
             raise Exception("Can't read " + ROOT_URL)
-    
+
     def get_monster(self) -> typing.Dict:
         result = requests.get(ROOT_URL + '/monster')
         if result:
@@ -45,7 +46,7 @@ class Client(object):
                 content = json.loads(result.text)
             except json.JSONDecodeError:
                 raise Exception(
-                    "Can't read content of " + ROOT_URL + '/monster') 
+                    "Can't read content of " + ROOT_URL + '/monster')
             return content
         else:
             raise Exception("Can't read " + ROOT_URL)

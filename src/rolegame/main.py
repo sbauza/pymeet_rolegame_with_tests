@@ -10,8 +10,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
-
 import argparse
 
 from rolegame import character
@@ -52,6 +50,7 @@ def run_game(difficulty: str = 'medium'):
     else:
         mygame.display_position()
         print("Congratulations. You won !")
+
 
 def main():
     parser = argparse.ArgumentParser()

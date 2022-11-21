@@ -10,7 +10,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-#This is required for type hinting a method with the enclosing class
+# This is required for type hinting a method with the enclosing class
 from __future__ import annotations
 
 from rolegame import character
@@ -43,7 +43,7 @@ class Game(object):
         self.client = client.Client()
 
     def display_position(self) -> None:
-        rounds_left = self.rounds - self.position -1  # we count from 0
+        rounds_left = self.rounds - self.position - 1  # we count from 0
         if self.is_over():
             print("You got the 💰")
         else:
@@ -63,7 +63,7 @@ class Game(object):
         spotted = dice % 2
         if spotted:
             print("🧌  Argh, you have been spotted by a monster !!!")
-        return spotted == True
+        return spotted == True  # noqa: E712
 
     def get_monster(self) -> character.Monster:
         monster_dict = self.client.get_monster()
@@ -73,7 +73,7 @@ class Game(object):
 
     def _attack(
             self, attacker: character.Character, attacked: character.Character
-        ) -> None:
+    ) -> None:
         dice = self.client.get_dice()
         attacker.attack(attacker.strength * dice, attacked)
 

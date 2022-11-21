@@ -12,17 +12,20 @@
 
 from rolegame import character
 
+
 class FakeIndependentMonster(character.Character):
     type = 'Monster'
     name = 'FakeIgor'
-    icon= '🧟'
+    icon = '🧟'
     strength = 3
     health = '100'
 
     def __init__(self, **kwargs):
         # we always redefine the kwargs
-        super(FakeIndependentMonster, self).__init__(self.name, health=int(self.health))
+        super(FakeIndependentMonster, self).__init__(self.name,
+                                                     health=int(self.health))
         self.strength = 3
+
 
 fake_monster_dict = {
     'name': FakeIndependentMonster.name,

@@ -19,14 +19,17 @@ from external_service.monsters import MONSTERS
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def hello_world():
     return {"Status": "Ok"}
+
 
 @app.route("/monster")
 def monster():
     return random.choice(MONSTERS)
 
+
 @app.route("/dice")
 def dice():
-    return {"score": random.randint(1,12)}
+    return {"score": random.randint(1, 12)}

@@ -19,6 +19,7 @@ import pytest
 
 from rolegame import character
 
+
 class TestHealth:
     def test_health_init(self):
         health = character.Health()
@@ -94,7 +95,7 @@ class TestPlayer:
     # fixtures can be used as test function parameters
     #                                        |
     #                                        v
-    def test_newPlayer_the_good_way(self, mocker):
+    def test_newPlayer_the_good_way_2(self, mocker):
         mock = mocker.patch("builtins.input")
         mock.return_value = "foo"
         player = character.Player.newPlayer()

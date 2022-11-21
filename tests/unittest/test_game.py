@@ -105,13 +105,18 @@ class TestGame2(unittest.TestCase):
         self.assertEqual(fake.FakeIndependentMonster.type, monster.type)
         self.assertEqual(fake.FakeIndependentMonster.name, monster.name)
         self.assertEqual(fake.FakeIndependentMonster.strength, monster.strength)
-        self.assertEqual(str(fake.FakeIndependentMonster.health), str(monster.health))
+        self.assertEqual(str(fake.FakeIndependentMonster.health),
+                         str(monster.health))
 
-    def test_get_monster_another_better_possibility(self):
+    def test_get_monster_another_possibility(self):
         fake_game = game.Game('test')
-        self.mock_client.Client.return_value.get_monster.return_value = fake.fake_monster_dict
+        # we need to mock the Client() instance hence the first return_value
+        self.mock_client.Client.return_value.get_monster.return_value = (
+            fake.fake_monster_dict
+        )
         monster = fake_game.get_monster()
         self.assertEqual(fake.FakeIndependentMonster.type, monster.type)
         self.assertEqual(fake.FakeIndependentMonster.name, monster.name)
         self.assertEqual(fake.FakeIndependentMonster.strength, monster.strength)
-        self.assertEqual(str(fake.FakeIndependentMonster.health), str(monster.health))
+        self.assertEqual(str(fake.FakeIndependentMonster.health),
+                         str(monster.health))

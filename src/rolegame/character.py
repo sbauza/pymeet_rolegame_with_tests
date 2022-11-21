@@ -10,7 +10,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-#This is required for type hinting a method with the enclosing class
+# This is required for type hinting a method with the enclosing class
 from __future__ import annotations
 from random import randint
 
@@ -32,7 +32,7 @@ class Health(object):
     def __str__(self) -> str:
         return str(self.gauge)
 
-    def __eq__(self, health: Health) -> bool: # type: ignore[override]
+    def __eq__(self, health: Health) -> bool:  # type: ignore[override]
         return self.gauge == health.gauge
 
     @property
@@ -42,14 +42,14 @@ class Health(object):
 
 class Character(object):
 
-    icon :str = ""
-    type :str = ""
-    name :str = ""
+    icon : str = ""
+    type : str = ""
+    name : str = ""
 
     def __init__(self, name: str, health: int = 100) -> None:
         self.health = Health(health)
         # Set character strength between 1 and 3
-        self.strength = randint(1,3)
+        self.strength = randint(1, 3)
         self.name = name
 
     def attack(self, damage: int, other: Character) -> None:
