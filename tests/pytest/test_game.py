@@ -13,7 +13,6 @@
 
 # THIS TEST MODULE IS NOT INTENDED TO HAVE A FULL COVERAGE. THIS IS JUST FOR
 # THE MEETUP.
-import pytest
 from rolegame import game
 from rolegame import client
 from rolegame import character
@@ -23,7 +22,6 @@ class TestGame():
     def test_display_position(self, monkeypatch, capsys):
         # Mock the __init__ method of client to avoid the connection check
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
-
 
         # Is it a UT or a IT ? Border becomes foggy
         hero = character.Player("Uggla")
@@ -46,22 +44,20 @@ class TestGame():
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
         monkeypatch.setattr(client.Client, "get_dice", lambda _: 3)
 
-
         # Is it a UT or a IT ? Border becomes foggy
         hero = character.Player("Uggla")
         mygame = game.Game(hero)
         output = mygame.spotted
-        assert output == True
+        assert output is True
 
         monkeypatch.setattr(client.Client, "get_dice", lambda _: 6)
         output = mygame.spotted
-        assert output == False
+        assert output is False
 
     def test_rest(self, monkeypatch, capsys):
         # Mock the __init__ method of client to avoid the connection check
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
         monkeypatch.setattr(client.Client, "get_dice", lambda _: 3)
-
 
         # Is it a UT or a IT ? Border becomes foggy
         hero = character.Player("Uggla")

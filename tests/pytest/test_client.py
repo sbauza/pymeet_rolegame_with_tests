@@ -14,7 +14,6 @@
 # THE MEETUP.
 
 import pytest
-import sys
 
 import requests
 from rolegame import client
@@ -168,6 +167,7 @@ def mock_monster_rest_api_mark(request, monkeypatch):
     yield
     print("Clean fixture")
 
+
 class TestClientMonsterMarker():
     # Use a marker
     @pytest.mark.monster_name("pity")
@@ -203,6 +203,7 @@ def mock_monster_rest_api_param(request, monkeypatch):
     # yield the value to check
     yield request.param
     print("Clean fixture")
+
 
 class TestClientMonsterParam():
     # We use the above fixture here ---------------------v
