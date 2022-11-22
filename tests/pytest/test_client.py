@@ -161,14 +161,14 @@ class TestClientMonsterGood():
 
 # Or
 @pytest.fixture()
-def mock_monster_rest_api_param(request, monkeypatch):
+def mock_monster_rest_api_mark(request, monkeypatch):
 
     marker = request.node.get_closest_marker("monster_name")
     monkeypatch.setattr(requests, "get", lambda _: fake_monster(marker.args[0]))
     yield
     print("Clean fixture")
 
-class TestClientMonster():
+class TestClientMonsterMarker():
     # Use a marker
     @pytest.mark.monster_name("pity")
     def test_get_monster_pity(self, monkeypatch, mock_monster_rest_api_mark):
@@ -204,9 +204,9 @@ def mock_monster_rest_api_param(request, monkeypatch):
     yield request.param
     print("Clean fixture")
 
-class TestClientMonster():
+class TestClientMonsterParam():
     # We use the above fixture here ---------------------v
-    def test_get_monster_pity(self, monkeypatch, mock_monster_rest_api_param):
+    def test_get_monsters(self, monkeypatch, mock_monster_rest_api_param):
         # Mock the __init__ method of client to avoid the connection check
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
 
@@ -221,3 +221,24 @@ class TestClientMonster():
             assert monster == (
                 {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
             )
+
+
+# Or more powerful using the requests-mock module
+class TestClientMonsterRequestsMock():
+    # We use the request_mock fixture here --------v
+    def test_get_monster(self, monkeypatch, requests_mock):
+        # Mock the __init__ method of client to avoid the connection check
+        monkeypatch.setattr(client.Client, "__init__", lambda _: None)
+
+        # Here we use requests_mock which allows to mock on sharp requests
+        # You can defined matching on url, path, regexp
+        # It can easily manage responses, headers...
+        requests_mock.get(
+            'http://localhost:5000/monster', json=fake_monster("pity").json()
+        )
+
+        cl = client.Client()
+        monster = cl.get_monster()
+        assert monster == (
+            {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
+        )
