@@ -46,10 +46,11 @@ class Character(object):
     type : str = ""
     name : str = ""
 
-    def __init__(self, name: str, health: int = 100) -> None:
+    def __init__(self, name: str,
+                 health: int = 100, strength: int = None) -> None:
         self.health = Health(health)
-        # Set character strength between 1 and 3
-        self.strength = randint(1, 3)
+        # Set character strength between 1 and 3 if unset.
+        self.strength = strength if strength else randint(1, 3)
         self.name = name
 
     def attack(self, damage: int, other: Character) -> None:
@@ -74,7 +75,7 @@ class Player(Character):
     type = 'Hero'
 
     def __init__(self, name: str) -> None:
-        super(Player, self).__init__(name, health=100)
+        super(Player, self).__init__(name, health=100, strength=1)
 
     @classmethod
     def newPlayer(cls) -> Player:
@@ -88,6 +89,5 @@ class Monster(Character):
 
     def __init__(self, name: str,
                  health: int, strength: int, icon: str) -> None:
-        super(Monster, self).__init__(name, health)
+        super(Monster, self).__init__(name, health, strength)
         self.icon = icon
-        self.strength = strength

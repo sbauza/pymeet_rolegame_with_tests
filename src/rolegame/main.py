@@ -31,7 +31,7 @@ def run_game(difficulty: str = 'medium'):
         mygame.display_position()
         if mygame.spotted:
             monster = mygame.get_monster()
-            choice = input("[F]lee or [A]ttack ? [F,A]: ")
+            choice = input("[F]lee or [A]ttack ? [F, A]: ")
             fled = False
             if choice.lower() == 'f':
                 fled = mygame.flee()
