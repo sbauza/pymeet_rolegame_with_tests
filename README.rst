@@ -12,6 +12,9 @@ Quest To The Fake Object !
     This is a toy game for understanding how mock and other test libs work.
 
 
+Quickstart :
+- run the external API using ./src/external_service/run.sh
+- issue 'qttfo' once the WSGI server is running.
 
 Incepted for the Python Grenoble Meetup on Nov 2022.
 
