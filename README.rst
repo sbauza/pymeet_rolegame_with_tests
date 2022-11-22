@@ -13,8 +13,8 @@ Quest To The Fake Object !
 
 
 Quickstart :
-- run the external API using ./src/external_service/run.sh
-- issue 'qttfo' once the WSGI server is running.
+ - run the external API using ./src/external_service/run.sh
+ - issue *qttfo* once the WSGI server is running.
 
 Incepted for the Python Grenoble Meetup on Nov 2022.
 
