@@ -60,22 +60,27 @@ class TestClientDiceOnly():
         dice = cl.get_dice()
         assert dice == 12
 
+
+def fake_monster(name):
+    resp = requests.Response()
+    resp.status_code = 200
+    content = "".join(
+        [
+            '{"name": "',
+              name,
+              '", "health": 100, "strength": 1, "icon": "🐍"}'
+        ]
+    )
+    resp._content = content.encode()
+    return resp
+
+
+# Do not do that
 @pytest.fixture
 def mock_monster_rest_api_bad():
-    def fake_monster(name):
-        resp = requests.Response()
-        resp.status_code = 200
-        content = "".join(
-            [
-                '{"name": "',
-                  name,
-                  '", "health": 100, "strength": 1, "icon": "🐍"}'
-            ]
-        )
-        resp._content = content.encode()
-        return resp
 
     def mock(name):
+        # Use the fixture instead otherwise you will have to undo mocks.
         mock = pytest.MonkeyPatch()
         mock.setattr(requests, "get", lambda _: fake_monster(name))
         return mock
@@ -97,7 +102,7 @@ class TestClientMonsterBad():
         assert monster == (
             {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
         )
-        # Undo needed to not leak mock
+        # Undo needed to not leak mock to other tests
         m1.undo()
 
         m2 = mock_monster_rest_api_bad("spider")
@@ -111,35 +116,62 @@ class TestClientMonsterBad():
             assert monster == (
                 {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
             )
+        # Undo needed to not leak mock
         m2.undo()
 
 
 # Do that
+@pytest.fixture
+def mock_monster_rest_api_good(monkeypatch):
 
-@pytest.fixture()
-def mock_monster_rest_api(request, monkeypatch):
-    def fake_monster(name):
-        resp = requests.Response()
-        resp.status_code = 200
-        content = "".join(
-            [
-                '{"name": "',
-                  name,
-                  '", "health": 100, "strength": 1, "icon": "🐍"}'
-            ]
+    def mock(name):
+        # Use the fixture instead otherwise you will have to undo mocks.
+        monkeypatch.setattr(requests, "get", lambda _: fake_monster(name))
+
+    yield mock
+    print("Clean fixture")
+
+
+class TestClientMonsterGood():
+    # We use the above fixture here ---------------------v
+    def test_get_monster(self, monkeypatch, mock_monster_rest_api_good):
+        # Mock the __init__ method of client to avoid the connection check
+        monkeypatch.setattr(client.Client, "__init__", lambda _: None)
+
+        # Use the fixture to mock different monsters
+        mock_monster_rest_api_good("pity")
+        cl = client.Client()
+        monster = cl.get_monster()
+        assert monster == (
+            {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
         )
-        resp._content = content.encode()
-        return resp
+
+        mock_monster_rest_api_good("spider")
+        monster = cl.get_monster()
+        assert monster == (
+            {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
+        )
+
+        # Next one is a little 🤯
+        with pytest.raises(AssertionError):
+            assert monster == (
+                {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
+            )
+
+
+# Or
+@pytest.fixture()
+def mock_monster_rest_api_param(request, monkeypatch):
 
     marker = request.node.get_closest_marker("monster_name")
     monkeypatch.setattr(requests, "get", lambda _: fake_monster(marker.args[0]))
     yield
     print("Clean fixture")
 
-@pytest.mark.monster_name("pity")
 class TestClientMonster():
-    # We use the above fixture here ---------------------v
-    def test_get_monster(self, monkeypatch, mock_monster_rest_api):
+    # Use a marker
+    @pytest.mark.monster_name("pity")
+    def test_get_monster_pity(self, monkeypatch, mock_monster_rest_api_mark):
         # Mock the __init__ method of client to avoid the connection check
         monkeypatch.setattr(client.Client, "__init__", lambda _: None)
 
@@ -149,14 +181,43 @@ class TestClientMonster():
         assert monster == (
             {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
         )
-        #
-        # monster = cl.get_monster()
-        # assert monster == (
-        #     {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
-        # )
-        #
-        # # Next one is a little 🤯
-        # with pytest.raises(AssertionError):
-        #     assert monster == (
-        #         {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
-        #     )
+
+    @pytest.mark.monster_name("spider")
+    def test_get_monster_spider(self, monkeypatch, mock_monster_rest_api_mark):
+        # Mock the __init__ method of client to avoid the connection check
+        monkeypatch.setattr(client.Client, "__init__", lambda _: None)
+
+        # Use the fixture to mock different monsters
+        cl = client.Client()
+        monster = cl.get_monster()
+        assert monster == (
+            {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
+        )
+
+
+# Or with parameters
+@pytest.fixture(params=["pity", "spider"])
+def mock_monster_rest_api_param(request, monkeypatch):
+
+    monkeypatch.setattr(requests, "get", lambda _: fake_monster(request.param))
+    # yield the value to check
+    yield request.param
+    print("Clean fixture")
+
+class TestClientMonster():
+    # We use the above fixture here ---------------------v
+    def test_get_monster_pity(self, monkeypatch, mock_monster_rest_api_param):
+        # Mock the __init__ method of client to avoid the connection check
+        monkeypatch.setattr(client.Client, "__init__", lambda _: None)
+
+        # Use the fixture to mock different monsters
+        cl = client.Client()
+        monster = cl.get_monster()
+        if mock_monster_rest_api_param == "pity":
+            assert monster == (
+                {"name": "pity", "health": 100, "strength": 1, "icon": "🐍"}
+            )
+        else:
+            assert monster == (
+                {"name": "spider", "health": 100, "strength": 1, "icon": "🐍"}
+            )
