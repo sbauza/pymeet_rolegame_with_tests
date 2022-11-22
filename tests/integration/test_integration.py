@@ -29,10 +29,6 @@ from tests.unittest import fake
 
 
 class FakeApp(object):
-
-    # this will be another flag we can use to trick the odds :-)
-    loaded_dice_seq = [1]
-
     def __init__(self):
         # let's just add our favorite FakeIgor :-)
         # By default this fixture will return all the monsters from the API
@@ -40,15 +36,19 @@ class FakeApp(object):
         monsters = [monster for monster in MONSTERS]
         monsters.append(fake.fake_monster_dict)
 
+        # Here, we provide an iterator for that list of monsters we can return
         self._monsters = monsters
         self._monsters_iter = iter(self._monsters)
-        # We persist a generator that will return the next dice.
+        # We persist a generator that will return the next dice from the below
+        # list
+        self.loaded_dice_seq = [1]
         self._dices_gen = self._loaded_dice_gen()
 
     def _loaded_dice_gen(self):
         for dice in self.loaded_dice_seq:
             yield dice
 
+    # This property will return the next dice from the list using the generator.
     @property
     def loaded_dices(self):
         try:
@@ -59,6 +59,7 @@ class FakeApp(object):
             dice = next(self._dices_gen)
         return dice
 
+    # Any test can use this setter for providing the dices list.
     @loaded_dices.setter
     def loaded_dices(self, dice_list):
         if isinstance(dice_list, int):
@@ -66,6 +67,7 @@ class FakeApp(object):
         self.loaded_dice_seq = dice_list
         self._dices_gen = self._loaded_dice_gen()
 
+    # Here, we return the next monster from the iterator.
     @property
     def monsters(self):
         try:
@@ -74,6 +76,7 @@ class FakeApp(object):
             self._monsters_iter = iter(self._monsters)
             return next(self._monsters_iter)
 
+    # And here, we can set the list of monsters to return.
     @monsters.setter
     def monsters(self, monsters_list):
         self._monsters = monsters_list
