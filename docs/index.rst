@@ -1,8 +1,8 @@
 ==========================
-pymeet_rolegame_with_tests
+qttfo
 ==========================
 
-This is the documentation of **pymeet_rolegame_with_tests**.
+This is the documentation of **qttfo**.
 
 .. note::
 

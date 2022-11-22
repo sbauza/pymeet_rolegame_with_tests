@@ -87,7 +87,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "pymeet_rolegame_with_tests"
+project = "qttfo"
 copyright = "2022, Sylvain Bauza"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -229,7 +229,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "pymeet_rolegame_with_tests-doc"
+htmlhelp_basename = "qttfo-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -246,7 +246,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ("index", "user_guide.tex", "pymeet_rolegame_with_tests Documentation", "Sylvain Bauza", "manual")
+    ("index", "user_guide.tex", "qttfo Documentation", "Sylvain Bauza", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

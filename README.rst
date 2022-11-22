@@ -1,5 +1,5 @@
-.. image:: https://github.com/sbauza/pymeet_rolegame_with_tests/actions/workflows/ci.yml/badge.svg
-    :target: https://github.com/sbauza/pymeet_rolegame_with_tests/actions/workflows/ci.yml
+.. image:: https://github.com/sbauza/qttfo/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/sbauza/qttfo/actions/workflows/ci.yml
     :alt: Tox gate Status
 
 |

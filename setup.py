@@ -1,5 +1,5 @@
 """
-    Setup file for pymeet_rolegame_with_tests.
+    Setup file for qttfo.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold 4.3.1.
