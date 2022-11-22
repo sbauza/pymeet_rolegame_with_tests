@@ -54,7 +54,7 @@ class Character(object):
         self.name = name
 
     def attack(self, damage: int, other: Character) -> None:
-        print("🎲 {} hits {} on {}".format(self.name, damage, other.name))
+        print(f"🎲 {self.name} hits {damage} on {other.name}")
         other.health -= damage
 
     @property
@@ -62,10 +62,10 @@ class Character(object):
         return self.health.dead
 
     def display_characteristics(self) -> None:
-        print("{} {}: {}".format(self.type, self.icon, self.name))
+        print(f"{self.type} {self.icon}: {self.name}")
         print("--------------------------------------------")
-        print("Strength: {}".format(self.strength))
-        print("Health: {}".format(self.health))
+        print(f"Strength: {self.strength}")
+        print(f"Health: {self.health}")
         print()
 
 

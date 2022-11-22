@@ -47,7 +47,7 @@ class Game(object):
         if self.is_over():
             print("You got the 💰")
         else:
-            print("_"*self.position + "{}".format(self.player.icon)
+            print("_"*self.position + f"{self.player.icon}"
                   + "_"*rounds_left + "💰")
 
     def is_over(self) -> bool:
@@ -99,7 +99,7 @@ class Game(object):
             dice = self.client.get_dice()
             self.player.health -= dice
             print("You're exhausted by the unsuccessful run, "
-                  "your health reduces by {}.".format(dice))
+                  f"your health reduces by {dice} XPs.")
         return fled
 
     def rest(self) -> None:
@@ -108,7 +108,7 @@ class Game(object):
         # if you're fortunate, you can get 100 more XPs but in average, you will
         # only get around 25 XPs, mwahahaha
         added_health = round(100 / dice)
-        print("You're fortunate to gain {} XPs".format(added_health))
+        print(f"You're fortunate to gain {added_health} XPs")
         self.player.health += added_health
         self.player.display_characteristics()
         # dice numbers above 6 don't give you extra rounds, but if less than 6,
@@ -116,5 +116,5 @@ class Game(object):
         added_rounds = int(added_health / 15)
         if added_rounds:
             s = 's' if added_rounds > 1 else ''
-            print("... but it takes {} more round{}.".format(added_rounds, s))
+            print(f"... but it takes {added_rounds} more round{s}.")
             self.rounds += added_rounds
